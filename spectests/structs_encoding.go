@@ -94,6 +94,33 @@ func (a *AggregateAndProof) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the AggregateAndProof object
+func (a *AggregateAndProof) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := a.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the AggregateAndProof object with a hasher
+func (a *AggregateAndProof) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Index'
+	hh.PutUint64(a.Index)
+
+	// Field (1) 'Aggregate'
+	if err := a.Aggregate.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (2) 'SelectionProof'
+	// TODO BYTES
+
+	return nil
+}
+
 // Marshal ssz marshals the Checkpoint object
 func (c *Checkpoint) Marshal() ([]byte, error) {
 	buf := make([]byte, c.Size())
@@ -136,6 +163,28 @@ func (c *Checkpoint) Unmarshal(buf []byte) error {
 func (c *Checkpoint) Size() (size int) {
 	size = 40
 	return
+}
+
+// HashTreeRoot ssz hashes the Checkpoint object
+func (c *Checkpoint) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := c.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Checkpoint object with a hasher
+func (c *Checkpoint) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Epoch'
+	hh.PutUint64(c.Epoch)
+
+	// Field (1) 'Root'
+	hh.PutRoot(c.Root)
+
+	return nil
 }
 
 // Marshal ssz marshals the AttestationData object
@@ -214,6 +263,41 @@ func (a *AttestationData) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the AttestationData object
+func (a *AttestationData) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := a.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the AttestationData object with a hasher
+func (a *AttestationData) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Slot'
+	hh.PutUint64(a.Slot)
+
+	// Field (1) 'Index'
+	hh.PutUint64(a.Index)
+
+	// Field (2) 'BeaconBlockHash'
+	hh.PutRoot(a.BeaconBlockHash)
+
+	// Field (3) 'Source'
+	if err := a.Source.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (4) 'Target'
+	if err := a.Target.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Marshal ssz marshals the Attestation object
 func (a *Attestation) Marshal() ([]byte, error) {
 	buf := make([]byte, a.Size())
@@ -290,6 +374,33 @@ func (a *Attestation) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the Attestation object
+func (a *Attestation) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := a.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Attestation object with a hasher
+func (a *Attestation) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'AggregationBits'
+	// TODO BITLIST
+
+	// Field (1) 'Data'
+	if err := a.Data.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (2) 'Signature'
+	// TODO BYTES
+
+	return nil
+}
+
 // Marshal ssz marshals the DepositData object
 func (d *DepositData) Marshal() ([]byte, error) {
 	buf := make([]byte, d.Size())
@@ -348,6 +459,34 @@ func (d *DepositData) Unmarshal(buf []byte) error {
 func (d *DepositData) Size() (size int) {
 	size = 184
 	return
+}
+
+// HashTreeRoot ssz hashes the DepositData object
+func (d *DepositData) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := d.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the DepositData object with a hasher
+func (d *DepositData) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Pubkey'
+	// TODO BYTES
+
+	// Field (1) 'WithdrawalCredentials'
+	hh.PutRoot(d.WithdrawalCredentials)
+
+	// Field (2) 'Amount'
+	hh.PutUint64(d.Amount)
+
+	// Field (3) 'Signature'
+	// TODO BYTES
+
+	return nil
 }
 
 // Marshal ssz marshals the Deposit object
@@ -409,6 +548,30 @@ func (d *Deposit) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the Deposit object
+func (d *Deposit) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := d.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Deposit object with a hasher
+func (d *Deposit) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Proof'
+	// TODO VECTOR
+
+	// Field (1) 'Data'
+	if err := d.Data.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Marshal ssz marshals the DepositMessage object
 func (d *DepositMessage) Marshal() ([]byte, error) {
 	buf := make([]byte, d.Size())
@@ -459,6 +622,31 @@ func (d *DepositMessage) Unmarshal(buf []byte) error {
 func (d *DepositMessage) Size() (size int) {
 	size = 88
 	return
+}
+
+// HashTreeRoot ssz hashes the DepositMessage object
+func (d *DepositMessage) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := d.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the DepositMessage object with a hasher
+func (d *DepositMessage) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Pubkey'
+	// TODO BYTES
+
+	// Field (1) 'WithdrawalCredentials'
+	hh.PutRoot(d.WithdrawalCredentials)
+
+	// Field (2) 'Amount'
+	hh.PutUint64(d.Amount)
+
+	return nil
 }
 
 // Marshal ssz marshals the IndexedAttestation object
@@ -552,6 +740,33 @@ func (i *IndexedAttestation) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the IndexedAttestation object
+func (i *IndexedAttestation) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := i.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the IndexedAttestation object with a hasher
+func (i *IndexedAttestation) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'AttestationIndices'
+	// TODO LIST
+
+	// Field (1) 'Data'
+	if err := i.Data.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (2) 'Signature'
+	// TODO BYTES
+
+	return nil
+}
+
 // Marshal ssz marshals the PendingAttestation object
 func (p *PendingAttestation) Marshal() ([]byte, error) {
 	buf := make([]byte, p.Size())
@@ -635,6 +850,36 @@ func (p *PendingAttestation) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the PendingAttestation object
+func (p *PendingAttestation) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := p.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the PendingAttestation object with a hasher
+func (p *PendingAttestation) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'AggregationBits'
+	// TODO BYTES
+
+	// Field (1) 'Data'
+	if err := p.Data.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (2) 'InclusionDelay'
+	hh.PutUint64(p.InclusionDelay)
+
+	// Field (3) 'ProposerIndex'
+	hh.PutUint64(p.ProposerIndex)
+
+	return nil
+}
+
 // Marshal ssz marshals the Fork object
 func (f *Fork) Marshal() ([]byte, error) {
 	buf := make([]byte, f.Size())
@@ -685,6 +930,31 @@ func (f *Fork) Unmarshal(buf []byte) error {
 func (f *Fork) Size() (size int) {
 	size = 16
 	return
+}
+
+// HashTreeRoot ssz hashes the Fork object
+func (f *Fork) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := f.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Fork object with a hasher
+func (f *Fork) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'PreviousVersion'
+	// TODO BYTES
+
+	// Field (1) 'CurrentVersion'
+	// TODO BYTES
+
+	// Field (2) 'Epoch'
+	hh.PutUint64(f.Epoch)
+
+	return nil
 }
 
 // Marshal ssz marshals the Validator object
@@ -769,6 +1039,46 @@ func (v *Validator) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the Validator object
+func (v *Validator) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := v.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Validator object with a hasher
+func (v *Validator) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Pubkey'
+	// TODO BYTES
+
+	// Field (1) 'WithdrawalCredentials'
+	hh.PutRoot(v.WithdrawalCredentials)
+
+	// Field (2) 'EffectiveBalance'
+	hh.PutUint64(v.EffectiveBalance)
+
+	// Field (3) 'Slashed'
+	// TODO BOOL
+
+	// Field (4) 'ActivationEligibilityEpoch'
+	hh.PutUint64(v.ActivationEligibilityEpoch)
+
+	// Field (5) 'ActivationEpoch'
+	hh.PutUint64(v.ActivationEpoch)
+
+	// Field (6) 'ExitEpoch'
+	hh.PutUint64(v.ExitEpoch)
+
+	// Field (7) 'WithdrawableEpoch'
+	hh.PutUint64(v.WithdrawableEpoch)
+
+	return nil
+}
+
 // Marshal ssz marshals the VoluntaryExit object
 func (v *VoluntaryExit) Marshal() ([]byte, error) {
 	buf := make([]byte, v.Size())
@@ -809,6 +1119,28 @@ func (v *VoluntaryExit) Unmarshal(buf []byte) error {
 func (v *VoluntaryExit) Size() (size int) {
 	size = 16
 	return
+}
+
+// HashTreeRoot ssz hashes the VoluntaryExit object
+func (v *VoluntaryExit) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := v.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the VoluntaryExit object with a hasher
+func (v *VoluntaryExit) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Epoch'
+	hh.PutUint64(v.Epoch)
+
+	// Field (1) 'ValidatorIndex'
+	hh.PutUint64(v.ValidatorIndex)
+
+	return nil
 }
 
 // Marshal ssz marshals the SignedVoluntaryExit object
@@ -862,6 +1194,30 @@ func (s *SignedVoluntaryExit) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the SignedVoluntaryExit object
+func (s *SignedVoluntaryExit) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := s.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the SignedVoluntaryExit object with a hasher
+func (s *SignedVoluntaryExit) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Exit'
+	if err := s.Exit.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (1) 'Signature'
+	// TODO BYTES
+
+	return nil
+}
+
 // Marshal ssz marshals the Eth1Block object
 func (e *Eth1Block) Marshal() ([]byte, error) {
 	buf := make([]byte, e.Size())
@@ -896,6 +1252,25 @@ func (e *Eth1Block) Unmarshal(buf []byte) error {
 func (e *Eth1Block) Size() (size int) {
 	size = 8
 	return
+}
+
+// HashTreeRoot ssz hashes the Eth1Block object
+func (e *Eth1Block) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := e.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Eth1Block object with a hasher
+func (e *Eth1Block) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Timestamp'
+	hh.PutUint64(e.Timestamp)
+
+	return nil
 }
 
 // Marshal ssz marshals the Eth1Data object
@@ -950,6 +1325,31 @@ func (e *Eth1Data) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the Eth1Data object
+func (e *Eth1Data) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := e.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Eth1Data object with a hasher
+func (e *Eth1Data) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'DepositRoot'
+	hh.PutRoot(e.DepositRoot)
+
+	// Field (1) 'DepositCount'
+	hh.PutUint64(e.DepositCount)
+
+	// Field (2) 'BlockHash'
+	hh.PutRoot(e.BlockHash)
+
+	return nil
+}
+
 // Marshal ssz marshals the SigningRoot object
 func (s *SigningRoot) Marshal() ([]byte, error) {
 	buf := make([]byte, s.Size())
@@ -994,6 +1394,28 @@ func (s *SigningRoot) Unmarshal(buf []byte) error {
 func (s *SigningRoot) Size() (size int) {
 	size = 40
 	return
+}
+
+// HashTreeRoot ssz hashes the SigningRoot object
+func (s *SigningRoot) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := s.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the SigningRoot object with a hasher
+func (s *SigningRoot) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'ObjectRoot'
+	hh.PutRoot(s.ObjectRoot)
+
+	// Field (1) 'Domain'
+	// TODO BYTES
+
+	return nil
 }
 
 // Marshal ssz marshals the HistoricalBatch object
@@ -1058,6 +1480,28 @@ func (h *HistoricalBatch) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the HistoricalBatch object
+func (h *HistoricalBatch) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := h.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the HistoricalBatch object with a hasher
+func (h *HistoricalBatch) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'BlockRoots'
+	// TODO VECTOR
+
+	// Field (1) 'StateRoots'
+	// TODO VECTOR
+
+	return nil
+}
+
 // Marshal ssz marshals the ProposerSlashing object
 func (p *ProposerSlashing) Marshal() ([]byte, error) {
 	buf := make([]byte, p.Size())
@@ -1118,6 +1562,34 @@ func (p *ProposerSlashing) Unmarshal(buf []byte) error {
 func (p *ProposerSlashing) Size() (size int) {
 	size = 408
 	return
+}
+
+// HashTreeRoot ssz hashes the ProposerSlashing object
+func (p *ProposerSlashing) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := p.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the ProposerSlashing object with a hasher
+func (p *ProposerSlashing) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'ProposerIndex'
+	hh.PutUint64(p.ProposerIndex)
+
+	// Field (1) 'Header1'
+	if err := p.Header1.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (2) 'Header2'
+	if err := p.Header2.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Marshal ssz marshals the AttesterSlashing object
@@ -1208,6 +1680,32 @@ func (a *AttesterSlashing) Size() (size int) {
 	size += a.Attestation2.Size()
 
 	return
+}
+
+// HashTreeRoot ssz hashes the AttesterSlashing object
+func (a *AttesterSlashing) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := a.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the AttesterSlashing object with a hasher
+func (a *AttesterSlashing) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Attestation1'
+	if err := a.Attestation1.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (1) 'Attestation2'
+	if err := a.Attestation2.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Marshal ssz marshals the BeaconState object
@@ -1684,6 +2182,94 @@ func (b *BeaconState) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the BeaconState object
+func (b *BeaconState) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := b.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the BeaconState object with a hasher
+func (b *BeaconState) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'GenesisTime'
+	hh.PutUint64(b.GenesisTime)
+
+	// Field (1) 'Slot'
+	hh.PutUint64(b.Slot)
+
+	// Field (2) 'Fork'
+	if err := b.Fork.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (3) 'LatestBlockHeader'
+	if err := b.LatestBlockHeader.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (4) 'BlockRoots'
+	// TODO VECTOR
+
+	// Field (5) 'StateRoots'
+	// TODO VECTOR
+
+	// Field (6) 'HistoricalRoots'
+	// TODO LIST
+
+	// Field (7) 'Eth1Data'
+	if err := b.Eth1Data.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (8) 'Eth1DataVotes'
+	// TODO LIST
+
+	// Field (9) 'Eth1DepositIndex'
+	hh.PutUint64(b.Eth1DepositIndex)
+
+	// Field (10) 'Validators'
+	// TODO LIST
+
+	// Field (11) 'Balances'
+	// TODO LIST
+
+	// Field (12) 'RandaoMixes'
+	// TODO VECTOR
+
+	// Field (13) 'Slashings'
+	// TODO VECTOR
+
+	// Field (14) 'PreviousEpochAttestations'
+	// TODO LIST
+
+	// Field (15) 'CurrentEpochAttestations'
+	// TODO LIST
+
+	// Field (16) 'JustificationBits'
+	// TODO BYTES
+
+	// Field (17) 'PreviousJustifiedCheckpoint'
+	if err := b.PreviousJustifiedCheckpoint.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (18) 'CurrentJustifiedCheckpoint'
+	if err := b.CurrentJustifiedCheckpoint.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (19) 'FinalizedCheckpoint'
+	if err := b.FinalizedCheckpoint.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Marshal ssz marshals the BeaconBlock object
 func (b *BeaconBlock) Marshal() ([]byte, error) {
 	buf := make([]byte, b.Size())
@@ -1768,6 +2354,36 @@ func (b *BeaconBlock) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the BeaconBlock object
+func (b *BeaconBlock) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := b.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the BeaconBlock object with a hasher
+func (b *BeaconBlock) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Slot'
+	hh.PutUint64(b.Slot)
+
+	// Field (1) 'ParentRoot'
+	hh.PutRoot(b.ParentRoot)
+
+	// Field (2) 'StateRoot'
+	hh.PutRoot(b.StateRoot)
+
+	// Field (3) 'Body'
+	if err := b.Body.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Marshal ssz marshals the SignedBeaconBlock object
 func (s *SignedBeaconBlock) Marshal() ([]byte, error) {
 	buf := make([]byte, s.Size())
@@ -1836,6 +2452,30 @@ func (s *SignedBeaconBlock) Size() (size int) {
 	size += s.Block.Size()
 
 	return
+}
+
+// HashTreeRoot ssz hashes the SignedBeaconBlock object
+func (s *SignedBeaconBlock) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := s.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the SignedBeaconBlock object with a hasher
+func (s *SignedBeaconBlock) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Block'
+	if err := s.Block.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (1) 'Signature'
+	// TODO BYTES
+
+	return nil
 }
 
 // Marshal ssz marshals the Transfer object
@@ -1912,6 +2552,43 @@ func (t *Transfer) Unmarshal(buf []byte) error {
 func (t *Transfer) Size() (size int) {
 	size = 184
 	return
+}
+
+// HashTreeRoot ssz hashes the Transfer object
+func (t *Transfer) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := t.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the Transfer object with a hasher
+func (t *Transfer) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Sender'
+	hh.PutUint64(t.Sender)
+
+	// Field (1) 'Recipient'
+	hh.PutUint64(t.Recipient)
+
+	// Field (2) 'Amount'
+	hh.PutUint64(t.Amount)
+
+	// Field (3) 'Fee'
+	hh.PutUint64(t.Fee)
+
+	// Field (4) 'Slot'
+	hh.PutUint64(t.Slot)
+
+	// Field (5) 'Pubkey'
+	// TODO BYTES
+
+	// Field (6) 'Signature'
+	// TODO BYTES
+
+	return nil
 }
 
 // Marshal ssz marshals the BeaconBlockBody object
@@ -2220,6 +2897,49 @@ func (b *BeaconBlockBody) Size() (size int) {
 	return
 }
 
+// HashTreeRoot ssz hashes the BeaconBlockBody object
+func (b *BeaconBlockBody) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := b.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the BeaconBlockBody object with a hasher
+func (b *BeaconBlockBody) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'RandaoReveal'
+	// TODO BYTES
+
+	// Field (1) 'Eth1Data'
+	if err := b.Eth1Data.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (2) 'Graffiti'
+	hh.PutRoot(b.Graffiti)
+
+	// Field (3) 'ProposerSlashings'
+	// TODO LIST
+
+	// Field (4) 'AttesterSlashings'
+	// TODO LIST
+
+	// Field (5) 'Attestations'
+	// TODO LIST
+
+	// Field (6) 'Deposits'
+	// TODO LIST
+
+	// Field (7) 'VoluntaryExits'
+	// TODO LIST
+
+	hh.BitwiseMerkleize()
+	return nil
+}
+
 // Marshal ssz marshals the SignedBeaconBlockHeader object
 func (s *SignedBeaconBlockHeader) Marshal() ([]byte, error) {
 	buf := make([]byte, s.Size())
@@ -2269,6 +2989,30 @@ func (s *SignedBeaconBlockHeader) Unmarshal(buf []byte) error {
 func (s *SignedBeaconBlockHeader) Size() (size int) {
 	size = 200
 	return
+}
+
+// HashTreeRoot ssz hashes the SignedBeaconBlockHeader object
+func (s *SignedBeaconBlockHeader) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := s.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the SignedBeaconBlockHeader object with a hasher
+func (s *SignedBeaconBlockHeader) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Header'
+	if err := s.Header.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	// Field (1) 'Signature'
+	// TODO BYTES
+
+	return nil
 }
 
 // Marshal ssz marshals the BeaconBlockHeader object
@@ -2329,4 +3073,32 @@ func (b *BeaconBlockHeader) Unmarshal(buf []byte) error {
 func (b *BeaconBlockHeader) Size() (size int) {
 	size = 104
 	return
+}
+
+// HashTreeRoot ssz hashes the BeaconBlockHeader object
+func (b *BeaconBlockHeader) HashTreeRoot() ([]byte, error) {
+	hh := ssz.DefaultHasherPool.Get()
+	if err := b.HashTreeRootWith(hh); err != nil {
+		ssz.DefaultHasherPool.Put(hh)
+		return nil, err
+	}
+	ssz.DefaultHasherPool.Put(hh)
+	return nil, nil
+}
+
+// HashTreeRootWith ssz hashes the BeaconBlockHeader object with a hasher
+func (b *BeaconBlockHeader) HashTreeRootWith(hh *ssz.Hasher) error {
+	// Field (0) 'Slot'
+	hh.PutUint64(b.Slot)
+
+	// Field (1) 'ParentRoot'
+	hh.PutRoot(b.ParentRoot)
+
+	// Field (2) 'StateRoot'
+	hh.PutRoot(b.StateRoot)
+
+	// Field (3) 'BodyRoot'
+	hh.PutRoot(b.BodyRoot)
+
+	return nil
 }

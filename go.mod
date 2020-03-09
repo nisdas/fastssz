@@ -12,9 +12,9 @@ require (
 	github.com/google/gofuzz v1.1.0
 	github.com/grpc-ecosystem/grpc-gateway v1.13.0
 	github.com/minio/highwayhash v1.0.0 // indirect
-	github.com/minio/sha256-simd v0.1.1 // indirect
+	github.com/minio/sha256-simd v0.1.1
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/protolambda/zssz v0.1.3
+	github.com/protolambda/zssz v0.1.4
 	github.com/prysmaticlabs/go-bitfield v0.0.0-20191017011753-53b773adde52
 	github.com/prysmaticlabs/go-ssz v0.0.0-20200101200214-e24db4d9e963
 	github.com/stretchr/testify v1.5.1

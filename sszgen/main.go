@@ -258,6 +258,7 @@ func (e *env) print(first bool, order []string) (string, bool) {
 		{{ .Marshal }}
 		{{ .Unmarshal }}
 		{{ .Size }}
+		{{ .HashTreeRoot }}
 	{{ end }}
 	`
 
@@ -273,7 +274,7 @@ func (e *env) print(first bool, order []string) (string, bool) {
 	}
 
 	type Obj struct {
-		Size, Marshal, Unmarshal string
+		Size, Marshal, Unmarshal, HashTreeRoot string
 	}
 
 	objs := []*Obj{}
@@ -284,9 +285,10 @@ func (e *env) print(first bool, order []string) (string, bool) {
 			continue
 		}
 		objs = append(objs, &Obj{
-			Marshal:   e.marshal(name, obj),
-			Unmarshal: e.unmarshal(name, obj),
-			Size:      e.size(name, obj),
+			Marshal:      e.marshal(name, obj),
+			Unmarshal:    e.unmarshal(name, obj),
+			Size:         e.size(name, obj),
+			HashTreeRoot: e.hashTreeRoot(name, obj),
 		})
 	}
 
