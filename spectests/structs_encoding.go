@@ -96,17 +96,13 @@ func (a *AggregateAndProof) Size() (size int) {
 
 // HashTreeRoot ssz hashes the AggregateAndProof object
 func (a *AggregateAndProof) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := a.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(a)
 }
 
 // HashTreeRootWith ssz hashes the AggregateAndProof object with a hasher
 func (a *AggregateAndProof) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Index'
 	hh.PutUint64(a.Index)
 
@@ -116,8 +112,13 @@ func (a *AggregateAndProof) HashTreeRootWith(hh *ssz.Hasher) error {
 	}
 
 	// Field (2) 'SelectionProof'
-	// TODO BYTES
+	if err := hh.PutBytes(a.SelectionProof); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -167,23 +168,22 @@ func (c *Checkpoint) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Checkpoint object
 func (c *Checkpoint) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := c.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(c)
 }
 
 // HashTreeRootWith ssz hashes the Checkpoint object with a hasher
 func (c *Checkpoint) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Epoch'
 	hh.PutUint64(c.Epoch)
 
 	// Field (1) 'Root'
 	hh.PutRoot(c.Root)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -265,17 +265,13 @@ func (a *AttestationData) Size() (size int) {
 
 // HashTreeRoot ssz hashes the AttestationData object
 func (a *AttestationData) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := a.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(a)
 }
 
 // HashTreeRootWith ssz hashes the AttestationData object with a hasher
 func (a *AttestationData) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Slot'
 	hh.PutUint64(a.Slot)
 
@@ -295,6 +291,9 @@ func (a *AttestationData) HashTreeRootWith(hh *ssz.Hasher) error {
 		return err
 	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -376,17 +375,13 @@ func (a *Attestation) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Attestation object
 func (a *Attestation) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := a.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(a)
 }
 
 // HashTreeRootWith ssz hashes the Attestation object with a hasher
 func (a *Attestation) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'AggregationBits'
 	// TODO BITLIST
 
@@ -396,8 +391,13 @@ func (a *Attestation) HashTreeRootWith(hh *ssz.Hasher) error {
 	}
 
 	// Field (2) 'Signature'
-	// TODO BYTES
+	if err := hh.PutBytes(a.Signature); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -463,19 +463,17 @@ func (d *DepositData) Size() (size int) {
 
 // HashTreeRoot ssz hashes the DepositData object
 func (d *DepositData) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := d.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(d)
 }
 
 // HashTreeRootWith ssz hashes the DepositData object with a hasher
 func (d *DepositData) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Pubkey'
-	// TODO BYTES
+	if err := hh.PutBytes(d.Pubkey); err != nil {
+		return err
+	}
 
 	// Field (1) 'WithdrawalCredentials'
 	hh.PutRoot(d.WithdrawalCredentials)
@@ -484,8 +482,13 @@ func (d *DepositData) HashTreeRootWith(hh *ssz.Hasher) error {
 	hh.PutUint64(d.Amount)
 
 	// Field (3) 'Signature'
-	// TODO BYTES
+	if err := hh.PutBytes(d.Signature); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -550,17 +553,13 @@ func (d *Deposit) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Deposit object
 func (d *Deposit) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := d.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(d)
 }
 
 // HashTreeRootWith ssz hashes the Deposit object with a hasher
 func (d *Deposit) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Proof'
 	// TODO VECTOR
 
@@ -569,6 +568,9 @@ func (d *Deposit) HashTreeRootWith(hh *ssz.Hasher) error {
 		return err
 	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -626,19 +628,17 @@ func (d *DepositMessage) Size() (size int) {
 
 // HashTreeRoot ssz hashes the DepositMessage object
 func (d *DepositMessage) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := d.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(d)
 }
 
 // HashTreeRootWith ssz hashes the DepositMessage object with a hasher
 func (d *DepositMessage) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Pubkey'
-	// TODO BYTES
+	if err := hh.PutBytes(d.Pubkey); err != nil {
+		return err
+	}
 
 	// Field (1) 'WithdrawalCredentials'
 	hh.PutRoot(d.WithdrawalCredentials)
@@ -646,6 +646,9 @@ func (d *DepositMessage) HashTreeRootWith(hh *ssz.Hasher) error {
 	// Field (2) 'Amount'
 	hh.PutUint64(d.Amount)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -742,17 +745,13 @@ func (i *IndexedAttestation) Size() (size int) {
 
 // HashTreeRoot ssz hashes the IndexedAttestation object
 func (i *IndexedAttestation) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := i.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(i)
 }
 
 // HashTreeRootWith ssz hashes the IndexedAttestation object with a hasher
 func (i *IndexedAttestation) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'AttestationIndices'
 	// TODO LIST
 
@@ -762,8 +761,13 @@ func (i *IndexedAttestation) HashTreeRootWith(hh *ssz.Hasher) error {
 	}
 
 	// Field (2) 'Signature'
-	// TODO BYTES
+	if err := hh.PutBytes(i.Signature); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -852,19 +856,17 @@ func (p *PendingAttestation) Size() (size int) {
 
 // HashTreeRoot ssz hashes the PendingAttestation object
 func (p *PendingAttestation) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := p.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(p)
 }
 
 // HashTreeRootWith ssz hashes the PendingAttestation object with a hasher
 func (p *PendingAttestation) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'AggregationBits'
-	// TODO BYTES
+	if err := hh.PutBytes(p.AggregationBits); err != nil {
+		return err
+	}
 
 	// Field (1) 'Data'
 	if err := p.Data.HashTreeRootWith(hh); err != nil {
@@ -877,6 +879,9 @@ func (p *PendingAttestation) HashTreeRootWith(hh *ssz.Hasher) error {
 	// Field (3) 'ProposerIndex'
 	hh.PutUint64(p.ProposerIndex)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -934,26 +939,25 @@ func (f *Fork) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Fork object
 func (f *Fork) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := f.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(f)
 }
 
 // HashTreeRootWith ssz hashes the Fork object with a hasher
 func (f *Fork) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'PreviousVersion'
-	// TODO BYTES
+	hh.PutFixedBytes(f.PreviousVersion)
 
 	// Field (1) 'CurrentVersion'
-	// TODO BYTES
+	hh.PutFixedBytes(f.CurrentVersion)
 
 	// Field (2) 'Epoch'
 	hh.PutUint64(f.Epoch)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1041,19 +1045,17 @@ func (v *Validator) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Validator object
 func (v *Validator) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := v.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(v)
 }
 
 // HashTreeRootWith ssz hashes the Validator object with a hasher
 func (v *Validator) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Pubkey'
-	// TODO BYTES
+	if err := hh.PutBytes(v.Pubkey); err != nil {
+		return err
+	}
 
 	// Field (1) 'WithdrawalCredentials'
 	hh.PutRoot(v.WithdrawalCredentials)
@@ -1062,7 +1064,7 @@ func (v *Validator) HashTreeRootWith(hh *ssz.Hasher) error {
 	hh.PutUint64(v.EffectiveBalance)
 
 	// Field (3) 'Slashed'
-	// TODO BOOL
+	hh.PutBool(v.Slashed)
 
 	// Field (4) 'ActivationEligibilityEpoch'
 	hh.PutUint64(v.ActivationEligibilityEpoch)
@@ -1076,6 +1078,9 @@ func (v *Validator) HashTreeRootWith(hh *ssz.Hasher) error {
 	// Field (7) 'WithdrawableEpoch'
 	hh.PutUint64(v.WithdrawableEpoch)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1123,23 +1128,22 @@ func (v *VoluntaryExit) Size() (size int) {
 
 // HashTreeRoot ssz hashes the VoluntaryExit object
 func (v *VoluntaryExit) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := v.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(v)
 }
 
 // HashTreeRootWith ssz hashes the VoluntaryExit object with a hasher
 func (v *VoluntaryExit) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Epoch'
 	hh.PutUint64(v.Epoch)
 
 	// Field (1) 'ValidatorIndex'
 	hh.PutUint64(v.ValidatorIndex)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1196,25 +1200,26 @@ func (s *SignedVoluntaryExit) Size() (size int) {
 
 // HashTreeRoot ssz hashes the SignedVoluntaryExit object
 func (s *SignedVoluntaryExit) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := s.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(s)
 }
 
 // HashTreeRootWith ssz hashes the SignedVoluntaryExit object with a hasher
 func (s *SignedVoluntaryExit) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Exit'
 	if err := s.Exit.HashTreeRootWith(hh); err != nil {
 		return err
 	}
 
 	// Field (1) 'Signature'
-	// TODO BYTES
+	if err := hh.PutBytes(s.Signature); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1256,20 +1261,19 @@ func (e *Eth1Block) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Eth1Block object
 func (e *Eth1Block) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := e.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(e)
 }
 
 // HashTreeRootWith ssz hashes the Eth1Block object with a hasher
 func (e *Eth1Block) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Timestamp'
 	hh.PutUint64(e.Timestamp)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1327,17 +1331,13 @@ func (e *Eth1Data) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Eth1Data object
 func (e *Eth1Data) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := e.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(e)
 }
 
 // HashTreeRootWith ssz hashes the Eth1Data object with a hasher
 func (e *Eth1Data) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'DepositRoot'
 	hh.PutRoot(e.DepositRoot)
 
@@ -1347,6 +1347,9 @@ func (e *Eth1Data) HashTreeRootWith(hh *ssz.Hasher) error {
 	// Field (2) 'BlockHash'
 	hh.PutRoot(e.BlockHash)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1398,23 +1401,22 @@ func (s *SigningRoot) Size() (size int) {
 
 // HashTreeRoot ssz hashes the SigningRoot object
 func (s *SigningRoot) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := s.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(s)
 }
 
 // HashTreeRootWith ssz hashes the SigningRoot object with a hasher
 func (s *SigningRoot) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'ObjectRoot'
 	hh.PutRoot(s.ObjectRoot)
 
 	// Field (1) 'Domain'
-	// TODO BYTES
+	hh.PutFixedBytes(s.Domain)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1482,23 +1484,22 @@ func (h *HistoricalBatch) Size() (size int) {
 
 // HashTreeRoot ssz hashes the HistoricalBatch object
 func (h *HistoricalBatch) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := h.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(h)
 }
 
 // HashTreeRootWith ssz hashes the HistoricalBatch object with a hasher
 func (h *HistoricalBatch) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'BlockRoots'
 	// TODO VECTOR
 
 	// Field (1) 'StateRoots'
 	// TODO VECTOR
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1566,17 +1567,13 @@ func (p *ProposerSlashing) Size() (size int) {
 
 // HashTreeRoot ssz hashes the ProposerSlashing object
 func (p *ProposerSlashing) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := p.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(p)
 }
 
 // HashTreeRootWith ssz hashes the ProposerSlashing object with a hasher
 func (p *ProposerSlashing) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'ProposerIndex'
 	hh.PutUint64(p.ProposerIndex)
 
@@ -1587,6 +1584,10 @@ func (p *ProposerSlashing) HashTreeRootWith(hh *ssz.Hasher) error {
 
 	// Field (2) 'Header2'
 	if err := p.Header2.HashTreeRootWith(hh); err != nil {
+		return err
+	}
+
+	if err := hh.BitwiseMerkleize(); err != nil {
 		return err
 	}
 	return nil
@@ -1684,17 +1685,13 @@ func (a *AttesterSlashing) Size() (size int) {
 
 // HashTreeRoot ssz hashes the AttesterSlashing object
 func (a *AttesterSlashing) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := a.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(a)
 }
 
 // HashTreeRootWith ssz hashes the AttesterSlashing object with a hasher
 func (a *AttesterSlashing) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Attestation1'
 	if err := a.Attestation1.HashTreeRootWith(hh); err != nil {
 		return err
@@ -1705,6 +1702,9 @@ func (a *AttesterSlashing) HashTreeRootWith(hh *ssz.Hasher) error {
 		return err
 	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2184,17 +2184,13 @@ func (b *BeaconState) Size() (size int) {
 
 // HashTreeRoot ssz hashes the BeaconState object
 func (b *BeaconState) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := b.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(b)
 }
 
 // HashTreeRootWith ssz hashes the BeaconState object with a hasher
 func (b *BeaconState) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'GenesisTime'
 	hh.PutUint64(b.GenesisTime)
 
@@ -2250,7 +2246,7 @@ func (b *BeaconState) HashTreeRootWith(hh *ssz.Hasher) error {
 	// TODO LIST
 
 	// Field (16) 'JustificationBits'
-	// TODO BYTES
+	hh.PutFixedBytes(b.JustificationBits)
 
 	// Field (17) 'PreviousJustifiedCheckpoint'
 	if err := b.PreviousJustifiedCheckpoint.HashTreeRootWith(hh); err != nil {
@@ -2267,6 +2263,9 @@ func (b *BeaconState) HashTreeRootWith(hh *ssz.Hasher) error {
 		return err
 	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2356,17 +2355,13 @@ func (b *BeaconBlock) Size() (size int) {
 
 // HashTreeRoot ssz hashes the BeaconBlock object
 func (b *BeaconBlock) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := b.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(b)
 }
 
 // HashTreeRootWith ssz hashes the BeaconBlock object with a hasher
 func (b *BeaconBlock) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Slot'
 	hh.PutUint64(b.Slot)
 
@@ -2381,6 +2376,9 @@ func (b *BeaconBlock) HashTreeRootWith(hh *ssz.Hasher) error {
 		return err
 	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2456,25 +2454,26 @@ func (s *SignedBeaconBlock) Size() (size int) {
 
 // HashTreeRoot ssz hashes the SignedBeaconBlock object
 func (s *SignedBeaconBlock) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := s.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(s)
 }
 
 // HashTreeRootWith ssz hashes the SignedBeaconBlock object with a hasher
 func (s *SignedBeaconBlock) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Block'
 	if err := s.Block.HashTreeRootWith(hh); err != nil {
 		return err
 	}
 
 	// Field (1) 'Signature'
-	// TODO BYTES
+	if err := hh.PutBytes(s.Signature); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2556,17 +2555,13 @@ func (t *Transfer) Size() (size int) {
 
 // HashTreeRoot ssz hashes the Transfer object
 func (t *Transfer) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := t.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(t)
 }
 
 // HashTreeRootWith ssz hashes the Transfer object with a hasher
 func (t *Transfer) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Sender'
 	hh.PutUint64(t.Sender)
 
@@ -2583,11 +2578,18 @@ func (t *Transfer) HashTreeRootWith(hh *ssz.Hasher) error {
 	hh.PutUint64(t.Slot)
 
 	// Field (5) 'Pubkey'
-	// TODO BYTES
+	if err := hh.PutBytes(t.Pubkey); err != nil {
+		return err
+	}
 
 	// Field (6) 'Signature'
-	// TODO BYTES
+	if err := hh.PutBytes(t.Signature); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2899,19 +2901,17 @@ func (b *BeaconBlockBody) Size() (size int) {
 
 // HashTreeRoot ssz hashes the BeaconBlockBody object
 func (b *BeaconBlockBody) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := b.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(b)
 }
 
 // HashTreeRootWith ssz hashes the BeaconBlockBody object with a hasher
 func (b *BeaconBlockBody) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'RandaoReveal'
-	// TODO BYTES
+	if err := hh.PutBytes(b.RandaoReveal); err != nil {
+		return err
+	}
 
 	// Field (1) 'Eth1Data'
 	if err := b.Eth1Data.HashTreeRootWith(hh); err != nil {
@@ -2936,7 +2936,9 @@ func (b *BeaconBlockBody) HashTreeRootWith(hh *ssz.Hasher) error {
 	// Field (7) 'VoluntaryExits'
 	// TODO LIST
 
-	hh.BitwiseMerkleize()
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2993,25 +2995,26 @@ func (s *SignedBeaconBlockHeader) Size() (size int) {
 
 // HashTreeRoot ssz hashes the SignedBeaconBlockHeader object
 func (s *SignedBeaconBlockHeader) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := s.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(s)
 }
 
 // HashTreeRootWith ssz hashes the SignedBeaconBlockHeader object with a hasher
 func (s *SignedBeaconBlockHeader) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Header'
 	if err := s.Header.HashTreeRootWith(hh); err != nil {
 		return err
 	}
 
 	// Field (1) 'Signature'
-	// TODO BYTES
+	if err := hh.PutBytes(s.Signature); err != nil {
+		return err
+	}
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3077,17 +3080,13 @@ func (b *BeaconBlockHeader) Size() (size int) {
 
 // HashTreeRoot ssz hashes the BeaconBlockHeader object
 func (b *BeaconBlockHeader) HashTreeRoot() ([]byte, error) {
-	hh := ssz.DefaultHasherPool.Get()
-	if err := b.HashTreeRootWith(hh); err != nil {
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, err
-	}
-	ssz.DefaultHasherPool.Put(hh)
-	return nil, nil
+	return ssz.HashWithDefaultHasher(b)
 }
 
 // HashTreeRootWith ssz hashes the BeaconBlockHeader object with a hasher
 func (b *BeaconBlockHeader) HashTreeRootWith(hh *ssz.Hasher) error {
+	hh.Bound()
+
 	// Field (0) 'Slot'
 	hh.PutUint64(b.Slot)
 
@@ -3100,5 +3099,8 @@ func (b *BeaconBlockHeader) HashTreeRootWith(hh *ssz.Hasher) error {
 	// Field (3) 'BodyRoot'
 	hh.PutRoot(b.BodyRoot)
 
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}
 	return nil
 }

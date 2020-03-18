@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -279,6 +280,23 @@ func checkSSZEncoding(t *testing.T, f string, base testCallback) {
 
 const benchmarkTestCase = "../eth2.0-spec-tests/tests/mainnet/phase0/ssz_static/BeaconBlock/ssz_random/case_4"
 
+func TestHashRoot(t *testing.T) {
+	obj := new(Eth1Data)
+	readValidGenericSSZ(nil, "../eth2.0-spec-tests/tests/mainnet/phase0/ssz_static/AttestationData/ssz_random/case_4", obj)
+
+	fmt.Println(obj)
+	ooo, _ := obj.HashTreeRoot()
+
+	fmt.Println("FINAL")
+	fmt.Println(hex.EncodeToString(ooo))
+
+	rr, err := baseSSZ.HashTreeRoot(obj)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(hex.EncodeToString(rr[:]))
+}
+
 func BenchmarkMarshalGoSSZ(b *testing.B) {
 	obj := new(BeaconBlock)
 	readValidGenericSSZ(nil, benchmarkTestCase, obj)
@@ -401,6 +419,11 @@ func readValidGenericSSZ(t *testing.T, path string, obj interface{}) []byte {
 	if err != nil {
 		t.Fatal(err)
 	}
+	raw2, err := ioutil.ReadFile(filepath.Join(path, rootsFile))
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(string(raw2))
 	if err := unmarshalYaml(raw, obj); err != nil {
 		t.Fatal(err)
 	}

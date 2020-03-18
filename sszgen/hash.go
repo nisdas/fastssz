@@ -9,13 +9,7 @@ import (
 func (e *env) hashTreeRoot(name string, v *Value) string {
 	tmpl := `// HashTreeRoot ssz hashes the {{.name}} object
 	func (:: *{{.name}}) HashTreeRoot() ([]byte, error) {
-		hh := ssz.DefaultHasherPool.Get()
-		if err := ::.HashTreeRootWith(hh); err != nil {
-			ssz.DefaultHasherPool.Put(hh)
-			return nil, err
-		}
-		ssz.DefaultHasherPool.Put(hh)
-		return nil, nil
+		return ssz.HashWithDefaultHasher(::)
 	}
 	
 	// HashTreeRootWith ssz hashes the {{.name}} object with a hasher	
@@ -38,10 +32,14 @@ func (v *Value) hashTreeRoot() string {
 		return v.hashTreeRootContainer(false)
 
 	case TypeBytes:
-		if v.isFixed() && v.n == 32 {
-			return fmt.Sprintf("hh.PutRoot(::.%s)", v.name)
+		if v.isFixed() {
+			if v.n == 32 {
+				return fmt.Sprintf("hh.PutRoot(::.%s)", v.name)
+			} else if v.n < 32 {
+				return fmt.Sprintf("hh.PutFixedBytes(::.%s)", v.name)
+			}
 		}
-		return "// TODO BYTES"
+		return fmt.Sprintf("if err := hh.PutBytes(::.%s); err != nil {\nreturn err\n}", v.name)
 
 	case TypeUint:
 		return fmt.Sprintf("hh.PutUint64(::.%s)", v.name)
@@ -73,5 +71,16 @@ func (v *Value) hashTreeRootContainer(start bool) string {
 		str := fmt.Sprintf("// Field (%d) '%s'\n%s\n", indx, i.name, i.hashTreeRoot())
 		out = append(out, str)
 	}
-	return strings.Join(out, "\n")
+
+	tmpl := `hh.Bound()
+
+	{{.fields}}
+
+	if err := hh.BitwiseMerkleize(); err != nil {
+		return err
+	}`
+
+	return execTmpl(tmpl, map[string]interface{}{
+		"fields": strings.Join(out, "\n"),
+	})
 }
